@@ -129,29 +129,28 @@
 
     <!-- Result Card -->
     <div class="bg-slate-900/85 backdrop-blur-md p-5 rounded-2xl border border-slate-700/60 space-y-4 text-center shadow-2xl">
-      <div class="text-xs text-slate-300 font-medium">📊 ผลการคำนวณ</div>
+      <div class="text-xs text-slate-300 font-medium">📊 ผลการคำนวณ (มาตรฐาน วสท.)</div>
       
       <div>
         <div class="text-xs text-slate-400 mb-1">กระแสโหลดใช้งานจริง (I_load)</div>
-        <div id="iLoad" class="text-3xl font-extrabold text-blue-400">18.72 A</div>
+        <div id="iLoad" class="text-3xl font-extrabold text-blue-400">0 A</div>
       </div>
 
       <div class="pt-3 border-t border-slate-800">
-        <div class="text-xs text-slate-400 mb-1">ขนาด Main CB ที่แนะนำ</div>
-        <div id="cbSize" class="text-3xl font-extrabold text-red-500">25 A</div>
+        <div class="text-xs text-slate-400 mb-1">ขนาด Main CB ที่แนะนำ (In)</div>
+        <div id="cbSize" class="text-3xl font-extrabold text-red-500">0 A</div>
       </div>
 
       <div class="pt-3 border-t border-slate-800">
         <div class="text-xs text-slate-400 mb-1">ขนาดสายไฟที่แนะนำ</div>
-        <div id="wireSize" class="text-2xl font-bold text-emerald-400">4 ตร.มม.</div>
+        <div id="wireSize" class="text-2xl font-bold text-emerald-400">0 ตร.มม.</div>
         
-        <!-- เพิ่มการแสดงพิกัดทนกระแสสูงสุดของสายไฟ -->
         <div class="mt-2 inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
-          <span class="text-xs text-emerald-300">พิกัดทนกระแสสูงสุด (I_max): </span>
-          <span id="wireCapacity" class="text-xs font-bold text-emerald-400">28 A</span>
+          <span class="text-xs text-emerald-300">พิกัดทนกระแสสายไฟ (Iz): </span>
+          <span id="wireCapacity" class="text-xs font-bold text-emerald-400">0 A</span>
         </div>
 
-        <div id="wireDetail" class="text-xs text-slate-400 mt-2">สาย THW (1 แกน) เดินในท่อร้อยสาย</div>
+        <div id="wireDetail" class="text-xs text-slate-400 mt-2">-</div>
       </div>
     </div>
 
@@ -160,6 +159,19 @@
   <script>
     let currentLoadType = 'general';
     let currentPhase = '1';
+
+    // ตารางขนาดสายไฟและพิกัดทนกระแสมาตรฐาน (Iz) ตามวิธีเดินสาย
+    const wireTable = [
+      { size: "1.5", conduit: 15, air: 21, underground: 21 },
+      { size: "2.5", conduit: 21, air: 29, underground: 29 },
+      { size: "4",   conduit: 28, air: 38, underground: 38 },
+      { size: "6",   conduit: 36, air: 49, underground: 49 },
+      { size: "10",  conduit: 50, air: 68, underground: 68 },
+      { size: "16",  conduit: 68, air: 91, underground: 91 },
+      { size: "25",  conduit: 89, air: 121, underground: 121 },
+      { size: "35",  conduit: 111, air: 150, underground: 150 },
+      { size: "50",  conduit: 134, air: 183, underground: 183 }
+    ];
 
     function setLoadType(type) {
       currentLoadType = type;
@@ -206,6 +218,7 @@
       const method = document.getElementById('installMethod').value;
       const cores = document.getElementById('wireCores').value;
 
+      // 1. คำนวณกระแสโหลดจริง (I_load)
       let iLoad = currentPhase === '1' 
         ? (p * 1000) / (v * pfVal)
         : (p * 1000) / (Math.sqrt(3) * v * pfVal);
@@ -214,32 +227,20 @@
         iLoad = iLoad * 1.25;
       }
 
-      // คำนวณขนาด CB Standard
+      // 2. หาขนาด CB (In >= 1.25 * I_load)
       const standardCBs = [10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250];
       const targetCB = iLoad * 1.25;
       let cbSize = standardCBs.find(cb => cb >= targetCB) || Math.ceil(targetCB);
 
-      // ตารางขนาดสายไฟและพิกัดทนกระแสสูงสุดตามวิธีเดินสาย
-      let wire = "2.5";
-      let capacity = 21;
-
-      // ตรวจสอบและปรับเปลี่ยนตามรูปแบบการใช้งานจริง
-      let factor = 1.0;
-      if (method === 'air') factor = 1.2;
-      if (method === 'underground') factor = 1.1;
-      if (method === 'conduit') factor = 0.9;
-
-      const effectiveI = iLoad / factor;
-
-      if (effectiveI <= 15) { wire = "1.5"; capacity = Math.round(15 * factor); }
-      else if (effectiveI <= 21) { wire = "2.5"; capacity = Math.round(21 * factor); }
-      else if (effectiveI <= 28) { wire = "4"; capacity = Math.round(28 * factor); }
-      else if (effectiveI <= 36) { wire = "6"; capacity = Math.round(36 * factor); }
-      else if (effectiveI <= 50) { wire = "10"; capacity = Math.round(50 * factor); }
-      else if (effectiveI <= 68) { wire = "16"; capacity = Math.round(68 * factor); }
-      else if (effectiveI <= 89) { wire = "25"; capacity = Math.round(89 * factor); }
-      else if (effectiveI <= 111) { wire = "35"; capacity = Math.round(111 * factor); }
-      else { wire = "50 ขึ้นไป"; capacity = Math.round(140 * factor); }
+      // 3. หาขนาดสายไฟ (Iz >= In) บังคับให้พิกัดสายไฟทนกระแสได้มากกว่าเบรกเกอร์เสมอ
+      let selectedWire = wireTable[wireTable.length - 1];
+      for (let item of wireTable) {
+        let capacity = item[method];
+        if (capacity >= cbSize) {
+          selectedWire = item;
+          break;
+        }
+      }
 
       let methodText = "เดินในท่อร้อยสาย";
       if (method === 'air') methodText = "เดินลอยในอากาศ / เกาะผนัง";
@@ -247,8 +248,8 @@
 
       document.getElementById('iLoad').innerText = iLoad.toFixed(2) + ' A';
       document.getElementById('cbSize').innerText = cbSize + ' A';
-      document.getElementById('wireSize').innerText = wire + ' ตร.มม.';
-      document.getElementById('wireCapacity').innerText = capacity + ' A';
+      document.getElementById('wireSize').innerText = selectedWire.size + ' ตร.มม.';
+      document.getElementById('wireCapacity').innerText = selectedWire[method] + ' A';
       document.getElementById('wireDetail').innerText = `สาย ${wireType} (${cores} แกน) ${methodText}`;
     }
 
