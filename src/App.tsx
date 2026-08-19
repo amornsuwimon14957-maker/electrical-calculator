@@ -24,7 +24,7 @@ export default function App() {
     <div className="min-h-screen bg-[#0f172a] text-slate-100 p-4 flex justify-center items-center">
       <div className="max-w-md w-full space-y-4">
         
-        {/* รูปโลโก้ที่จะแสดงกลางหน้าเว็บ */}
+        {/* รูปโลโก้ */}
         <div className="text-center">
           <img 
             src="https://img2.pic.in.th/pic/4528cdbf-cca0-4533-a4da-a0cc7048f529.png" 
