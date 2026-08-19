@@ -25,6 +25,12 @@
   ></div>
   <div class="fixed inset-0 bg-slate-950/75 backdrop-blur-[2px] -z-10"></div>
 
+  <!-- Credits (Top Right) -->
+  <div class="fixed top-3 right-3 text-right z-50 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700/60 shadow-lg">
+    <div class="text-[10px] text-slate-300 font-medium">By : Amorn Amornkul</div>
+    <div class="text-[9px] text-slate-400">ฝ่ายซ่อมบำรุงเครื่องกลและไฟฟ้า</div>
+  </div>
+
   <!-- MAIN MENU SECTION -->
   <div id="mainMenu" class="max-w-md w-full space-y-6 my-8 text-center">
     
@@ -96,7 +102,7 @@
       >
         ⬅️ หน้าหลัก
       </button>
-      <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+      <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5 pr-20">
         <img 
           src="https://i.ibb.co/6cm4rGx2/4528cdbf-cca0-4533-a4da-a0cc7048f529.jpg" 
           alt="HICRETE Logo" 
@@ -227,7 +233,6 @@
     let currentLoadType = 'general';
     let currentPhase = '1';
 
-    // สลับหน้า เมนูหลัก / โปรแกรมคำนวณ
     function showPage(page) {
       if (page === 'calculator') {
         document.getElementById('mainMenu').classList.add('hidden');
