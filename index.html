@@ -144,7 +144,14 @@
       <div class="pt-3 border-t border-slate-800">
         <div class="text-xs text-slate-400 mb-1">ขนาดสายไฟที่แนะนำ</div>
         <div id="wireSize" class="text-2xl font-bold text-emerald-400">4 ตร.มม.</div>
-        <div id="wireDetail" class="text-xs text-slate-400 mt-1">สาย THW เดินในท่อ</div>
+        
+        <!-- เพิ่มการแสดงพิกัดทนกระแสสูงสุดของสายไฟ -->
+        <div class="mt-2 inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+          <span class="text-xs text-emerald-300">พิกัดทนกระแสสูงสุด (I_max): </span>
+          <span id="wireCapacity" class="text-xs font-bold text-emerald-400">28 A</span>
+        </div>
+
+        <div id="wireDetail" class="text-xs text-slate-400 mt-2">สาย THW (1 แกน) เดินในท่อร้อยสาย</div>
       </div>
     </div>
 
@@ -179,10 +186,8 @@
 
     function updateOptions() {
       const type = document.getElementById('wireType').value;
-      const cores = document.getElementById('wireCores');
       const method = document.getElementById('installMethod');
 
-      // ข้อจำกัดของสาย VAF (ใช้ได้เฉพาะ 1 เฟส เดินลอย/เกาะผนัง)
       if (type === 'VAF') {
         method.value = 'air';
         if (currentPhase === '3') {
@@ -209,31 +214,32 @@
         iLoad = iLoad * 1.25;
       }
 
-      // คำนวณเบรกเกอร์
+      // คำนวณขนาด CB Standard
       const standardCBs = [10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250];
       const targetCB = iLoad * 1.25;
       let cbSize = standardCBs.find(cb => cb >= targetCB) || Math.ceil(targetCB);
 
-      // ตารางขนาดสายไฟจำลองพิกัดกระแสตามการเดินสาย
+      // ตารางขนาดสายไฟและพิกัดทนกระแสสูงสุดตามวิธีเดินสาย
       let wire = "2.5";
-      let factor = 1.0;
+      let capacity = 21;
 
-      // ปรับ Factor ตามการระบายความร้อนของวิธีเดินสาย
-      if (method === 'air') factor = 1.2;          // เดินลอย ระบายความร้อนดี
-      if (method === 'underground') factor = 1.1;  // ฝังดิน ระบายความร้อนปานกลาง
-      if (method === 'conduit') factor = 0.9;      // ในท่อ สะสมความร้อน
+      // ตรวจสอบและปรับเปลี่ยนตามรูปแบบการใช้งานจริง
+      let factor = 1.0;
+      if (method === 'air') factor = 1.2;
+      if (method === 'underground') factor = 1.1;
+      if (method === 'conduit') factor = 0.9;
 
       const effectiveI = iLoad / factor;
 
-      if (effectiveI <= 15) wire = "1.5";
-      else if (effectiveI <= 21) wire = "2.5";
-      else if (effectiveI <= 28) wire = "4";
-      else if (effectiveI <= 36) wire = "6";
-      else if (effectiveI <= 50) wire = "10";
-      else if (effectiveI <= 68) wire = "16";
-      else if (effectiveI <= 89) wire = "25";
-      else if (effectiveI <= 111) wire = "35";
-      else wire = "50 ขึ้นไป";
+      if (effectiveI <= 15) { wire = "1.5"; capacity = Math.round(15 * factor); }
+      else if (effectiveI <= 21) { wire = "2.5"; capacity = Math.round(21 * factor); }
+      else if (effectiveI <= 28) { wire = "4"; capacity = Math.round(28 * factor); }
+      else if (effectiveI <= 36) { wire = "6"; capacity = Math.round(36 * factor); }
+      else if (effectiveI <= 50) { wire = "10"; capacity = Math.round(50 * factor); }
+      else if (effectiveI <= 68) { wire = "16"; capacity = Math.round(68 * factor); }
+      else if (effectiveI <= 89) { wire = "25"; capacity = Math.round(89 * factor); }
+      else if (effectiveI <= 111) { wire = "35"; capacity = Math.round(111 * factor); }
+      else { wire = "50 ขึ้นไป"; capacity = Math.round(140 * factor); }
 
       let methodText = "เดินในท่อร้อยสาย";
       if (method === 'air') methodText = "เดินลอยในอากาศ / เกาะผนัง";
@@ -242,10 +248,10 @@
       document.getElementById('iLoad').innerText = iLoad.toFixed(2) + ' A';
       document.getElementById('cbSize').innerText = cbSize + ' A';
       document.getElementById('wireSize').innerText = wire + ' ตร.มม.';
+      document.getElementById('wireCapacity').innerText = capacity + ' A';
       document.getElementById('wireDetail').innerText = `สาย ${wireType} (${cores} แกน) ${methodText}`;
     }
 
-    // เรียกคำนวณครั้งแรก
     calculate();
   </script>
 </body>
