@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>คำนวณขนาดสายไฟและ CB - HICRETE</title>
 
-  <!-- Open Graph สำหรับพรีวิวใน LINE / FB -->
+  <!-- Open Graph -->
   <link rel="icon" type="image/jpeg" href="https://i.ibb.co/6cm4rGx2/4528cdbf-cca0-4533-a4da-a0cc7048f529.jpg" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="คำนวณขนาดสายไฟและ CB - HICRETE" />
-  <meta property="og:description" content="โปรแกรมคำนวณขนาดสายไฟ THW และ Main CB มาตรฐาน" />
+  <meta property="og:description" content="โปรแกรมคำนวณขนาดสายไฟและ Main CB มาตรฐาน วสท." />
   <meta property="og:image" content="https://i.ibb.co/6cm4rGx2/4528cdbf-cca0-4533-a4da-a0cc7048f529.jpg" />
   <meta property="og:url" content="https://electrical-calculator-hicrete.vercel.app/" />
 
@@ -23,14 +23,12 @@
     class="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
     style="background-image: url('https://wsrv.nl/?url=https://img2.pic.in.th/images-2b75e5d88945caa41.jpg');"
   ></div>
-  <!-- ชั้นมืดโปร่งแสงให้อ่านตัวหนังสือง่ายขึ้น -->
   <div class="fixed inset-0 bg-slate-950/75 backdrop-blur-[2px] -z-10"></div>
 
   <div class="max-w-md w-full space-y-4 my-8">
 
     <!-- Header Section -->
     <div class="text-center space-y-2">
-      <!-- โลโก้รูปภาพ HICRETE ( Direct Link จาก ImgBB ) -->
       <div class="inline-block p-1.5 bg-slate-900/90 rounded-2xl shadow-2xl border border-slate-700/80 backdrop-blur-md">
         <img 
           src="https://i.ibb.co/6cm4rGx2/4528cdbf-cca0-4533-a4da-a0cc7048f529.jpg" 
@@ -41,10 +39,10 @@
       <h1 class="text-xl font-bold text-white flex items-center justify-center gap-2 pt-1 drop-shadow-md">
         <span class="text-yellow-400">⚡</span> คำนวณขนาดสายไฟ & CB
       </h1>
-      <p class="text-xs text-slate-300 drop-shadow">มาตรฐานสาย IEC 01 (THW) เดินในท่อร้อยสาย</p>
+      <p class="text-xs text-slate-300 drop-shadow">วิเคราะห์พิกัดกระแสตามมาตรฐานการติดตั้งไฟฟ้า</p>
     </div>
 
-    <!-- Main Card -->
+    <!-- Main Card Input -->
     <div class="bg-slate-900/85 backdrop-blur-md p-5 rounded-2xl border border-slate-700/60 space-y-4 shadow-2xl">
       
       <!-- Load Type Switch -->
@@ -83,6 +81,38 @@
         </div>
       </div>
 
+      <!-- ชนิดสายไฟ และ จำนวนแกน -->
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-slate-200 block mb-1.5 font-medium">ชนิดสายไฟ:</label>
+          <select id="wireType" onchange="updateOptions()" class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
+            <option value="THW">THW (IEC 01)</option>
+            <option value="VAF">VAF</option>
+            <option value="NYY">NYY</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-xs text-slate-200 block mb-1.5 font-medium">จำนวนแกน:</label>
+          <select id="wireCores" onchange="calculate()" class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
+            <option value="1">1 แกน (Single-Core)</option>
+            <option value="2">2 แกน (2-Core)</option>
+            <option value="3">3 แกน (3-Core)</option>
+            <option value="4">4 แกน (4-Core)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- วิธีการเดินสาย -->
+      <div>
+        <label class="text-xs text-slate-200 block mb-1.5 font-medium">วิธีการเดินสาย:</label>
+        <select id="installMethod" onchange="calculate()" class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
+          <option value="conduit">เดินในท่อร้อยสาย (Conduit)</option>
+          <option value="air">เดินลอยในอากาศ / เกาะผนัง</option>
+          <option value="underground">เดินฝังดินโดยตรง (Direct Buried)</option>
+        </select>
+      </div>
+
       <!-- Power Factor -->
       <div>
         <label class="text-xs text-slate-200 block mb-1.5 font-medium">Power Factor (PF):</label>
@@ -112,8 +142,9 @@
       </div>
 
       <div class="pt-3 border-t border-slate-800">
-        <div class="text-xs text-slate-400 mb-1">ขนาดสายไฟ THW (IEC 01)</div>
-        <div id="wireSize" class="text-2xl font-bold text-emerald-400">4 ตร.มม. <span class="text-xs font-normal text-slate-400">(1 เส้น/เฟส)</span></div>
+        <div class="text-xs text-slate-400 mb-1">ขนาดสายไฟที่แนะนำ</div>
+        <div id="wireSize" class="text-2xl font-bold text-emerald-400">4 ตร.มม.</div>
+        <div id="wireDetail" class="text-xs text-slate-400 mt-1">สาย THW เดินในท่อ</div>
       </div>
     </div>
 
@@ -142,6 +173,23 @@
       document.getElementById('btnPhase3').className = phase === '3' 
         ? 'py-2.5 rounded-lg transition bg-slate-800/80 text-slate-300 hover:text-white' 
         : 'py-2.5 rounded-lg transition bg-blue-600 text-white shadow-lg shadow-blue-600/30';
+      updateOptions();
+      calculate();
+    }
+
+    function updateOptions() {
+      const type = document.getElementById('wireType').value;
+      const cores = document.getElementById('wireCores');
+      const method = document.getElementById('installMethod');
+
+      // ข้อจำกัดของสาย VAF (ใช้ได้เฉพาะ 1 เฟส เดินลอย/เกาะผนัง)
+      if (type === 'VAF') {
+        method.value = 'air';
+        if (currentPhase === '3') {
+          alert('สาย VAF ไม่รองรับระบบไฟฟ้า 3 เฟส');
+          document.getElementById('wireType').value = 'THW';
+        }
+      }
       calculate();
     }
 
@@ -149,6 +197,9 @@
       const p = parseFloat(document.getElementById('power').value) || 0;
       const pfVal = parseFloat(document.getElementById('pf').value) || 0.85;
       const v = currentPhase === '1' ? 220 : 380;
+      const wireType = document.getElementById('wireType').value;
+      const method = document.getElementById('installMethod').value;
+      const cores = document.getElementById('wireCores').value;
 
       let iLoad = currentPhase === '1' 
         ? (p * 1000) / (v * pfVal)
@@ -158,17 +209,44 @@
         iLoad = iLoad * 1.25;
       }
 
-      const cbSize = Math.ceil(iLoad * 1.25);
+      // คำนวณเบรกเกอร์
+      const standardCBs = [10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250];
+      const targetCB = iLoad * 1.25;
+      let cbSize = standardCBs.find(cb => cb >= targetCB) || Math.ceil(targetCB);
+
+      // ตารางขนาดสายไฟจำลองพิกัดกระแสตามการเดินสาย
       let wire = "2.5";
-      if (iLoad > 18) wire = "4";
-      if (iLoad > 24) wire = "6";
-      if (iLoad > 31) wire = "10";
-      if (iLoad > 43) wire = "16";
+      let factor = 1.0;
+
+      // ปรับ Factor ตามการระบายความร้อนของวิธีเดินสาย
+      if (method === 'air') factor = 1.2;          // เดินลอย ระบายความร้อนดี
+      if (method === 'underground') factor = 1.1;  // ฝังดิน ระบายความร้อนปานกลาง
+      if (method === 'conduit') factor = 0.9;      // ในท่อ สะสมความร้อน
+
+      const effectiveI = iLoad / factor;
+
+      if (effectiveI <= 15) wire = "1.5";
+      else if (effectiveI <= 21) wire = "2.5";
+      else if (effectiveI <= 28) wire = "4";
+      else if (effectiveI <= 36) wire = "6";
+      else if (effectiveI <= 50) wire = "10";
+      else if (effectiveI <= 68) wire = "16";
+      else if (effectiveI <= 89) wire = "25";
+      else if (effectiveI <= 111) wire = "35";
+      else wire = "50 ขึ้นไป";
+
+      let methodText = "เดินในท่อร้อยสาย";
+      if (method === 'air') methodText = "เดินลอยในอากาศ / เกาะผนัง";
+      if (method === 'underground') methodText = "เดินฝังดินโดยตรง";
 
       document.getElementById('iLoad').innerText = iLoad.toFixed(2) + ' A';
       document.getElementById('cbSize').innerText = cbSize + ' A';
-      document.getElementById('wireSize').innerHTML = wire + ' ตร.มม. <span class="text-xs font-normal text-slate-400">(1 เส้น/เฟส)</span>';
+      document.getElementById('wireSize').innerText = wire + ' ตร.มม.';
+      document.getElementById('wireDetail').innerText = `สาย ${wireType} (${cores} แกน) ${methodText}`;
     }
+
+    // เรียกคำนวณครั้งแรก
+    calculate();
   </script>
 </body>
 </html>
