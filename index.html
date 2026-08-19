@@ -1,20 +1,94 @@
 <!DOCTYPE html>
 <html lang="th">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="https://img2.pic.in.th/pic/4528cdbf-cca0-4533-a4da-a0cc7048f529.png" />
-    <title>HICRETE - Electrical Calculator</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HICRETE - Electrical Calculator</title>
+  
+  <!-- โลโก้และ Open Graph สำหรับ LINE / FB Preview -->
+  <link rel="icon" type="image/png" href="https://img2.pic.in.th/pic/4528cdbf-cca0-4533-a4da-a0cc7048f529.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="HICRETE - Electrical Calculator" />
+  <meta property="og:description" content="โปรแกรมคำนวณขนาดสายไฟและ Main CB" />
+  <meta property="og:image" content="https://img2.pic.in.th/pic/4528cdbf-cca0-4533-a4da-a0cc7048f529.png" />
+  <meta property="og:url" content="https://electrical-calculator-hicrete.vercel.app/" />
 
-    <!-- พรีวิวเวลาก๊อปปี้ลิงก์ไปแปะใน LINE / FB -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="HICRETE - Electrical Calculator" />
-    <meta property="og:description" content="โปรแกรมคำนวณขนาดสายไฟและ Main CB" />
-    <meta property="og:image" content="https://img2.pic.in.th/pic/4528cdbf-cca0-4533-a4da-a0cc7048f529.png" />
-    <meta property="og:url" content="https://electrical-calculator-hicrete.vercel.app/" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 flex justify-center items-center">
+  <div class="max-w-md w-full space-y-4">
+    
+    <!-- โลโก้แสดงผลหน้าเว็บ -->
+    <div class="text-center">
+      <img src="https://img2.pic.in.th/pic/4528cdbf-cca0-4533-a4da-a0cc7048f529.png" alt="HICRETE Logo" class="w-32 h-auto mx-auto mb-3 rounded-2xl shadow-lg border border-slate-700" />
+      <h1 class="text-xl font-bold text-white flex items-center justify-center gap-2">
+        <span>⚡</span> คำนวณขนาดสายไฟ & CB
+      </h1>
+      <p class="text-xs text-slate-400">มาตรฐานสาย IEC 01 (THW) เดินในท่อร้อยสาย</p>
+    </div>
+
+    <!-- ฟอร์มคำนวณ -->
+    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 shadow-xl">
+      <div>
+        <label class="text-xs text-slate-300 block mb-1 font-medium">กำลังไฟฟ้า (กิโลวัตต์ / kW):</label>
+        <input type="number" id="power" value="3.5" oninput="calculate()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500" />
+      </div>
+
+      <div>
+        <label class="text-xs text-slate-300 block mb-1 font-medium">ระบบไฟฟ้า (Phase):</label>
+        <select id="phase" onchange="calculate()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+          <option value="1">1 เฟส (220V)</option>
+          <option value="3">3 เฟส (380V)</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="text-xs text-slate-300 block mb-1 font-medium">Power Factor (PF):</label>
+        <input type="number" id="pf" value="0.85" step="0.01" oninput="calculate()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500" />
+      </div>
+    </div>
+
+    <!-- ผลลัพธ์ -->
+    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3 text-center shadow-xl">
+      <div class="text-xs text-slate-400">📊 ผลการคำนวณ</div>
+      <div>
+        <div class="text-xs text-slate-400">กระแสโหลดใช้งานจริง (I_load)</div>
+        <div id="iLoad" class="text-2xl font-bold text-blue-400">18.72 A</div>
+      </div>
+      <div class="pt-2 border-t border-slate-700">
+        <div class="text-xs text-slate-400">ขนาด Main CB ที่แนะนำ</div>
+        <div id="cbSize" class="text-2xl font-bold text-red-500">25 A</div>
+      </div>
+      <div class="pt-2 border-t border-slate-700">
+        <div class="text-xs text-slate-400">ขนาดสายไฟ THW (IEC 01)</div>
+        <div id="wireSize" class="text-xl font-bold text-emerald-400">4 ตร.มม.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function calculate() {
+      const p = parseFloat(document.getElementById('power').value) || 0;
+      const phase = document.getElementById('phase').value;
+      const pfVal = parseFloat(document.getElementById('pf').value) || 0.85;
+      const v = phase === '1' ? 220 : 380;
+
+      const iLoad = phase === '1' 
+        ? (p * 1000) / (v * pfVal)
+        : (p * 1000) / (Math.sqrt(3) * v * pfVal);
+
+      const cbSize = Math.ceil(iLoad * 1.25);
+      let wire = "2.5";
+      if (iLoad > 18) wire = "4";
+      if (iLoad > 24) wire = "6";
+      if (iLoad > 31) wire = "10";
+      if (iLoad > 43) wire = "16";
+
+      document.getElementById('iLoad').innerText = iLoad.toFixed(2) + ' A';
+      document.getElementById('cbSize').innerText = cbSize + ' A';
+      document.getElementById('wireSize').innerText = wire + ' ตร.มม.';
+    }
+  </script>
+</body>
 </html>
