@@ -2,15 +2,14 @@
 <html lang="th">
   <head>
     <meta charset="UTF-8" />
-    
-    <!-- รูปไอคอนขนาดเล็กบนแท็บเบราว์เซอร์ (Favicon) -->
-    <link rel="icon" type="image/png" href="https://img2.pic.in.th/pic/4528cdbf-cca0-4533-a4da-a0cc7048f529.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- ชื่อเว็บไซต์ที่แสดงบนแถบเบราว์เซอร์ -->
+    <!-- ไอคอนบนแถบเบราว์เซอร์ -->
+    <link rel="icon" type="image/png" href="https://img2.pic.in.th/pic/4528cdbf-cca0-4533-a4da-a0cc7048f529.png" />
+    
     <title>HICRETE - Electrical Calculator</title>
 
-    <!-- Open Graph Tags (แสดงพรีวิวรูปภาพ ชื่อเว็บ และคำบรรยาย เวลาแปะลิงก์ใน LINE / Facebook) -->
+    <!-- Open Graph Tags (รูปภาพและข้อความเวลาแปะลิงก์ใน LINE / Facebook) -->
     <meta property="og:title" content="HICRETE - Electrical Calculator" />
     <meta property="og:description" content="โปรแกรมคำนวณขนาดสายไฟและ Main CB" />
     <meta property="og:image" content="https://img2.pic.in.th/pic/4528cdbf-cca0-4533-a4da-a0cc7048f529.png" />
@@ -19,14 +18,31 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://electrical-calculator-hicrete.vercel.app/" />
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="HICRETE - Electrical Calculator" />
-    <meta name="twitter:description" content="โปรแกรมคำนวณขนาดสายไฟและ Main CB" />
-    <meta name="twitter:image" content="https://img2.pic.in.th/pic/4528cdbf-cca0-4533-a4da-a0cc7048f529.png" />
+    <!-- Tailwind CSS สำหรับจัดสไตล์ -->
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+  <body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8 flex items-center justify-center">
+    <div class="max-w-md w-full space-y-6">
+      
+      <!-- Header แสดงรูปแอปและชื่อโปรแกรม -->
+      <header class="text-center space-y-3">
+        <img 
+          src="https://img2.pic.in.th/pic/4528cdbf-cca0-4533-a4da-a0cc7048f529.png" 
+          alt="HICRETE Electrical Calculator Logo" 
+          class="w-36 h-auto mx-auto rounded-2xl shadow-2xl border-2 border-slate-700 hover:scale-105 transition-transform duration-300"
+        />
+        <h1 class="text-2xl font-bold text-white">HICRETE Electrical Calculator</h1>
+        <p class="text-slate-400 text-sm">โปรแกรมคำนวณขนาดสายไฟและ Main CB</p>
+      </header>
+
+      <!-- คอนเทนเนอร์สำหรับแอปพลิเคชัน -->
+      <main id="root" class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+        <!-- ระบบจะโหลดแอปเข้าตรงนี้ -->
+      </main>
+
+      <footer class="text-center text-xs text-slate-500">
+        © HICRETE - Electrical Calculator
+      </footer>
+    </div>
   </body>
 </html>
