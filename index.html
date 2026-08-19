@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>คำนวณขนาดสายไฟและ CB - HICRETE</title>
+  <title>Electrical Calculator - HICRETE</title>
 
   <!-- Open Graph -->
   <link rel="icon" type="image/jpeg" href="https://i.ibb.co/6cm4rGx2/4528cdbf-cca0-4533-a4da-a0cc7048f529.jpg" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="คำนวณขนาดสายไฟและ CB - HICRETE" />
-  <meta property="og:description" content="โปรแกรมคำนวณขนาดสายไฟและ Main CB มาตรฐาน วสท." />
+  <meta property="og:title" content="Electrical Calculator - HICRETE" />
+  <meta property="og:description" content="โปรแกรมคำนวณระบบไฟฟ้า มาตรฐาน วสท." />
   <meta property="og:image" content="https://i.ibb.co/6cm4rGx2/4528cdbf-cca0-4533-a4da-a0cc7048f529.jpg" />
   <meta property="og:url" content="https://electrical-calculator-hicrete.vercel.app/" />
 
@@ -25,25 +25,92 @@
   ></div>
   <div class="fixed inset-0 bg-slate-950/75 backdrop-blur-[2px] -z-10"></div>
 
-  <div class="max-w-md w-full space-y-4 my-8">
-
-    <!-- Header Section -->
-    <div class="text-center space-y-2">
-      <div class="inline-block p-1.5 bg-slate-900/90 rounded-2xl shadow-2xl border border-slate-700/80 backdrop-blur-md">
+  <!-- MAIN MENU SECTION -->
+  <div id="mainMenu" class="max-w-md w-full space-y-6 my-8 text-center">
+    
+    <!-- Big Logo Section -->
+    <div class="space-y-3">
+      <div class="inline-block p-3 bg-slate-900/90 rounded-3xl shadow-2xl border border-slate-700/80 backdrop-blur-md">
         <img 
           src="https://i.ibb.co/6cm4rGx2/4528cdbf-cca0-4533-a4da-a0cc7048f529.jpg" 
           alt="HICRETE Logo" 
-          class="w-24 h-auto rounded-xl object-cover block mx-auto"
+          class="w-32 h-auto rounded-2xl object-cover block mx-auto shadow-md"
         />
       </div>
-      <h1 class="text-xl font-bold text-white flex items-center justify-center gap-2 pt-1 drop-shadow-md">
-        <span class="text-yellow-400">⚡</span> คำนวณขนาดสายไฟ & CB
-      </h1>
-      <p class="text-xs text-slate-300 drop-shadow">วิเคราะห์พิกัดกระแสตามมาตรฐานการติดตั้งไฟฟ้า</p>
+      <div>
+        <h1 class="text-2xl font-black text-white tracking-wide drop-shadow-md">
+          Electrical Calculator
+        </h1>
+        <p class="text-xs text-slate-400 mt-1">โปรแกรมคำนวณระบบไฟฟ้ามาตรฐานวิศวกรรม</p>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="bg-slate-900/85 backdrop-blur-md p-5 rounded-2xl border border-slate-700/60 space-y-3 shadow-2xl">
+      <div class="text-xs font-semibold text-slate-300 text-left mb-2">เลือกโปรแกรมการคำนวณ:</div>
+
+      <!-- Option 1: Wire & CB Calculator -->
+      <button 
+        onclick="showPage('calculator')" 
+        class="w-full text-left p-4 rounded-xl bg-slate-800/90 hover:bg-blue-600/90 border border-slate-700/80 hover:border-blue-400/50 transition duration-200 group flex items-center justify-between shadow-md"
+      >
+        <div>
+          <div class="text-sm font-bold text-white group-hover:text-white flex items-center gap-2">
+            <span>⚡</span> 1. คำนวณขนาดสายไฟ และ CB
+          </div>
+          <div class="text-xs text-slate-400 group-hover:text-blue-100 mt-0.5">
+            วิเคราะห์พิกัดกระแสขนาดสายและเบรกเกอร์ตาม วสท.
+          </div>
+        </div>
+        <span class="text-slate-400 group-hover:text-white text-lg">➔</span>
+      </button>
+
+      <!-- Option 2: Voltage Drop Calculator (In Development) -->
+      <button 
+        onclick="alert('ฟังก์ชันนี้อยู่ระหว่างการพัฒนา')" 
+        class="w-full text-left p-4 rounded-xl bg-slate-900/50 border border-slate-800/80 opacity-70 hover:opacity-100 transition duration-200 flex items-center justify-between cursor-pointer"
+      >
+        <div>
+          <div class="text-sm font-bold text-slate-300 flex items-center gap-2">
+            <span>📉</span> 2. คำนวณค่าแรงดันตกในระบบไฟฟ้า
+          </div>
+          <div class="text-[10px] inline-block px-2 py-0.5 mt-1 bg-yellow-500/20 text-yellow-400 rounded border border-yellow-500/30">
+            อยู่ระหว่างพัฒนา
+          </div>
+        </div>
+        <span class="text-slate-600 text-lg">🔒</span>
+      </button>
+    </div>
+
+    <div class="text-xs text-slate-400 drop-shadow">HICRETE Engineering Support Tool</div>
+  </div>
+
+  <!-- CALCULATOR SECTION (HIDDEN BY DEFAULT) -->
+  <div id="calculatorPage" class="max-w-md w-full space-y-4 my-8 hidden">
+
+    <!-- Header Section -->
+    <div class="flex items-center justify-between bg-slate-900/80 backdrop-blur-md p-3 rounded-2xl border border-slate-700/60 shadow-lg">
+      <button 
+        onclick="showPage('menu')" 
+        class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1"
+      >
+        ⬅️ หน้าหลัก
+      </button>
+      <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+        <img 
+          src="https://i.ibb.co/6cm4rGx2/4528cdbf-cca0-4533-a4da-a0cc7048f529.jpg" 
+          alt="HICRETE Logo" 
+          class="w-5 h-5 rounded-md object-cover"
+        />
+        Electrical Calculator
+      </div>
     </div>
 
     <!-- Main Card Input -->
     <div class="bg-slate-900/85 backdrop-blur-md p-5 rounded-2xl border border-slate-700/60 space-y-4 shadow-2xl">
+      <h2 class="text-base font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-2">
+        <span class="text-yellow-400">⚡</span> คำนวณขนาดสายไฟ & CB
+      </h2>
       
       <!-- Load Type Switch -->
       <div class="grid grid-cols-2 gap-2 text-xs">
@@ -160,7 +227,18 @@
     let currentLoadType = 'general';
     let currentPhase = '1';
 
-    // ตารางขนาดสายไฟและพิกัดทนกระแสมาตรฐาน (Iz) ตามวิธีเดินสาย
+    // สลับหน้า เมนูหลัก / โปรแกรมคำนวณ
+    function showPage(page) {
+      if (page === 'calculator') {
+        document.getElementById('mainMenu').classList.add('hidden');
+        document.getElementById('calculatorPage').classList.remove('hidden');
+        calculate();
+      } else {
+        document.getElementById('calculatorPage').classList.add('hidden');
+        document.getElementById('mainMenu').classList.remove('hidden');
+      }
+    }
+
     const wireTable = [
       { size: "1.5", conduit: 15, air: 21, underground: 21 },
       { size: "2.5", conduit: 21, air: 29, underground: 29 },
@@ -218,7 +296,6 @@
       const method = document.getElementById('installMethod').value;
       const cores = document.getElementById('wireCores').value;
 
-      // 1. คำนวณกระแสโหลดจริง (I_load)
       let iLoad = currentPhase === '1' 
         ? (p * 1000) / (v * pfVal)
         : (p * 1000) / (Math.sqrt(3) * v * pfVal);
@@ -227,12 +304,10 @@
         iLoad = iLoad * 1.25;
       }
 
-      // 2. หาขนาด CB (In >= 1.25 * I_load)
       const standardCBs = [10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250];
       const targetCB = iLoad * 1.25;
       let cbSize = standardCBs.find(cb => cb >= targetCB) || Math.ceil(targetCB);
 
-      // 3. หาขนาดสายไฟ (Iz >= In) บังคับให้พิกัดสายไฟทนกระแสได้มากกว่าเบรกเกอร์เสมอ
       let selectedWire = wireTable[wireTable.length - 1];
       for (let item of wireTable) {
         let capacity = item[method];
@@ -252,8 +327,6 @@
       document.getElementById('wireCapacity').innerText = selectedWire[method] + ' A';
       document.getElementById('wireDetail').innerText = `สาย ${wireType} (${cores} แกน) ${methodText}`;
     }
-
-    calculate();
   </script>
 </body>
 </html>
