@@ -39,7 +39,6 @@
     <!-- Big Logo Section -->
     <div class="space-y-3">
       <div class="inline-block p-2 bg-slate-900/90 rounded-3xl shadow-2xl border border-slate-700/80 backdrop-blur-md transition transform hover:scale-105 duration-300">
-        <!-- New HC Electrical Logo Image -->
         <img 
           src="https://i.ibb.co/Y4W8d4bB/hc-electrical-logo.png" 
           alt="HC Electrical Logo" 
@@ -75,7 +74,7 @@
         <span class="text-slate-400 group-hover:text-white text-lg">➔</span>
       </button>
 
-      <!-- Option 2: Voltage Drop Calculator (In Development) -->
+      <!-- Option 2: Voltage Drop Calculator -->
       <button 
         onclick="alert('ฟังก์ชันนี้อยู่ระหว่างการพัฒนา')" 
         class="w-full text-left p-4 rounded-xl bg-slate-900/50 border border-slate-800/80 opacity-70 hover:opacity-100 transition duration-200 flex items-center justify-between cursor-pointer"
@@ -135,10 +134,10 @@
       
       <!-- Load Type Switch -->
       <div class="grid grid-cols-2 gap-2 text-xs">
-        <button id="btnGeneral" onclick="setLoadType('general')" class="py-2.5 rounded-lg font-medium transition bg-blue-600 text-white shadow-lg shadow-blue-600/30">
+        <button id="btnGeneral" type="button" onclick="setLoadType('general')" class="py-2.5 rounded-lg font-medium transition bg-blue-600 text-white shadow-lg shadow-blue-600/30">
           โหลดทั่วไป / แสงสว่าง
         </button>
-        <button id="btnMotor" onclick="setLoadType('motor')" class="py-2.5 rounded-lg font-medium transition bg-slate-800/80 text-slate-300 hover:text-white">
+        <button id="btnMotor" type="button" onclick="setLoadType('motor')" class="py-2.5 rounded-lg font-medium transition bg-slate-800/80 text-slate-300 hover:text-white">
           โหลดมอเตอร์ / แอร์
         </button>
       </div>
@@ -150,7 +149,7 @@
           <input 
             type="number" 
             id="power" 
-            value="3.5" 
+            value="30" 
             step="0.1"
             oninput="calculate()" 
             class="flex-1 bg-slate-950/80 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition"
@@ -167,14 +166,14 @@
         </div>
       </div>
 
-      <!-- Phase Selection -->
+      <!-- Phase Selection (Fixed Radio Group Style) -->
       <div>
         <label class="text-xs text-slate-200 block mb-1.5 font-medium">ระบบไฟฟ้า (Phase):</label>
         <div class="grid grid-cols-2 gap-2 text-xs">
-          <button id="btnPhase1" onclick="setPhase('1')" class="py-2.5 rounded-lg transition bg-blue-600 text-white shadow-lg shadow-blue-600/30">
+          <button id="btnPhase1" type="button" onclick="setPhase('1')" class="py-2.5 rounded-lg transition bg-blue-600 text-white shadow-lg shadow-blue-600/30 font-medium">
             1 เฟส (220V)
           </button>
-          <button id="btnPhase3" onclick="setPhase('3')" class="py-2.5 rounded-lg transition bg-slate-800/80 text-slate-300 hover:text-white">
+          <button id="btnPhase3" type="button" onclick="setPhase('3')" class="py-2.5 rounded-lg transition bg-slate-800/80 text-slate-300 hover:text-white font-medium">
             3 เฟส (380V)
           </button>
         </div>
@@ -186,8 +185,8 @@
           <label class="text-xs text-slate-200 block mb-1.5 font-medium">ชนิดสายไฟ:</label>
           <select id="wireType" onchange="updateOptions()" class="w-full bg-slate-950/80 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
             <option value="THW">THW (IEC 01)</option>
-            <option value="VAF">VAF</option>
             <option value="NYY">NYY</option>
+            <option value="VAF">VAF</option>
           </select>
         </div>
 
@@ -240,17 +239,31 @@
         <div id="cbSize" class="text-3xl font-extrabold text-red-500">0 A</div>
       </div>
 
+      <!-- Single Cable Result -->
       <div class="pt-3 border-t border-slate-800">
-        <div class="text-xs text-slate-400 mb-1">ขนาดสายไฟที่แนะนำ</div>
+        <div class="text-xs text-slate-400 mb-1">ขนาดสายไฟแนะนำ (สายเดี่ยว)</div>
         <div id="wireSize" class="text-2xl font-bold text-emerald-400">0 ตร.มม.</div>
         
         <div class="mt-2 inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
-          <span class="text-xs text-emerald-300">พิกัดทนกระแสสายไฟ (Iz): </span>
+          <span class="text-xs text-emerald-300">พิกัดทนกระแสสาย (Iz): </span>
           <span id="wireCapacity" class="text-xs font-bold text-emerald-400">0 A</span>
         </div>
 
         <div id="wireDetail" class="text-xs text-slate-400 mt-2">-</div>
       </div>
+
+      <!-- Parallel Run Recommendation (ทางเลือกเบิ้ลสาย) -->
+      <div id="parallelBox" class="pt-3 border-t border-slate-800 hidden">
+        <div class="text-xs text-yellow-400 font-semibold mb-1 flex items-center justify-center gap-1">
+          <span>🔀</span> คำแนะนำทางเลือก: การเบิ้ลสาย (Parallel Runs)
+        </div>
+        <div id="parallelText" class="text-lg font-bold text-yellow-300 mt-1">2x (1x95 ตร.มม.)</div>
+        <div id="parallelCap" class="text-xs text-slate-300 mt-1">พิกัดทนกระแสรวม: 520 A</div>
+        <div class="text-[10px] text-slate-400 mt-1 leading-relaxed">
+          *การเดินเบิ้ลสายช่วยลดความแข็งในการดัดโค้งและลดขนาดท่อร้อยสาย
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -258,7 +271,7 @@
   <!-- BUILDING PLANS SECTION (HIDDEN BY DEFAULT) -->
   <div id="buildingPlansPage" class="max-w-md w-full space-y-4 my-8 hidden">
 
-    <!-- Header Section (นำ Electrical Calculator ออกแล้ว) -->
+    <!-- Header Section -->
     <div class="flex items-center justify-between bg-slate-900/80 backdrop-blur-md p-3 rounded-2xl border border-slate-700/60 shadow-lg">
       <button 
         onclick="showPage('menu')" 
@@ -332,46 +345,55 @@
       }
     }
 
+    // Extended Wire Table up to 500 sq.mm.
     const wireTable = [
-      { size: "1.5", conduit: 15, air: 21, underground: 21 },
-      { size: "2.5", conduit: 21, air: 29, underground: 29 },
-      { size: "4",   conduit: 28, air: 38, underground: 38 },
-      { size: "6",   conduit: 36, air: 49, underground: 49 },
-      { size: "10",  conduit: 50, air: 68, underground: 68 },
-      { size: "16",  conduit: 68, air: 91, underground: 91 },
-      { size: "25",  conduit: 89, air: 121, underground: 121 },
+      { size: "1.5", conduit: 15,  air: 21,  underground: 21 },
+      { size: "2.5", conduit: 21,  air: 29,  underground: 29 },
+      { size: "4",   conduit: 28,  air: 38,  underground: 38 },
+      { size: "6",   conduit: 36,  air: 49,  underground: 49 },
+      { size: "10",  conduit: 50,  air: 68,  underground: 68 },
+      { size: "16",  conduit: 68,  air: 91,  underground: 91 },
+      { size: "25",  conduit: 89,  air: 121, underground: 121 },
       { size: "35",  conduit: 111, air: 150, underground: 150 },
-      { size: "50",  conduit: 134, air: 183, underground: 183 }
+      { size: "50",  conduit: 134, air: 183, underground: 183 },
+      { size: "70",  conduit: 171, air: 233, underground: 225 },
+      { size: "95",  conduit: 207, air: 282, underground: 270 },
+      { size: "120", conduit: 239, air: 328, underground: 310 },
+      { size: "150", conduit: 272, air: 375, underground: 350 },
+      { size: "185", conduit: 310, air: 430, underground: 395 },
+      { size: "240", conduit: 364, air: 510, underground: 460 },
+      { size: "300", conduit: 419, air: 590, underground: 520 },
+      { size: "400", conduit: 502, air: 715, underground: 600 },
+      { size: "500", conduit: 578, air: 830, underground: 680 }
     ];
 
     function setLoadType(type) {
       currentLoadType = type;
-      document.getElementById('btnGeneral').className = type === 'general' 
-        ? 'py-2.5 rounded-lg font-medium transition bg-blue-600 text-white shadow-lg shadow-blue-600/30' 
-        : 'py-2.5 rounded-lg font-medium transition bg-slate-800/80 text-slate-300 hover:text-white';
-      document.getElementById('btnMotor').className = type === 'motor' 
-        ? 'py-2.5 rounded-lg font-medium transition bg-blue-600 text-white shadow-lg shadow-blue-600/30' 
-        : 'py-2.5 rounded-lg font-medium transition bg-slate-800/80 text-slate-300 hover:text-white';
+      const activeBtnClass = 'py-2.5 rounded-lg font-medium transition bg-blue-600 text-white shadow-lg shadow-blue-600/30';
+      const inactiveBtnClass = 'py-2.5 rounded-lg font-medium transition bg-slate-800/80 text-slate-300 hover:text-white';
+      
+      document.getElementById('btnGeneral').className = type === 'general' ? activeBtnClass : inactiveBtnClass;
+      document.getElementById('btnMotor').className = type === 'motor' ? activeBtnClass : inactiveBtnClass;
       calculate();
     }
 
     function setPhase(phase) {
       currentPhase = phase;
-      document.getElementById('btnPhase1').className = phase === '1' 
-        ? 'py-2.5 rounded-lg transition bg-blue-600 text-white shadow-lg shadow-blue-600/30' 
-        : 'py-2.5 rounded-lg font-medium transition bg-slate-800/80 text-slate-300 hover:text-white';
-      document.getElementById('btnPhase3').className = phase === '3' 
-        ? 'py-2.5 rounded-lg transition bg-slate-800/80 text-slate-300 hover:text-white' 
-        : 'py-2.5 rounded-lg transition bg-blue-600 text-white shadow-lg shadow-blue-600/30';
+      const activeBtnClass = 'py-2.5 rounded-lg font-medium transition bg-blue-600 text-white shadow-lg shadow-blue-600/30';
+      const inactiveBtnClass = 'py-2.5 rounded-lg font-medium transition bg-slate-800/80 text-slate-300 hover:text-white';
+
+      document.getElementById('btnPhase1').className = phase === '1' ? activeBtnClass : inactiveBtnClass;
+      document.getElementById('btnPhase3').className = phase === '3' ? activeBtnClass : inactiveBtnClass;
+      
       updateOptions();
       calculate();
     }
 
     function updateOptions() {
-      const type = document.getElementById('wireType').value;
+      const wireType = document.getElementById('wireType').value;
       const method = document.getElementById('installMethod');
 
-      if (type === 'VAF') {
+      if (wireType === 'VAF') {
         method.value = 'air';
         if (currentPhase === '3') {
           alert('สาย VAF ไม่รองรับระบบไฟฟ้า 3 เฟส');
@@ -405,14 +427,14 @@
         iLoad = iLoad * 1.25;
       }
 
-      const standardCBs = [10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250];
+      const standardCBs = [10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250];
       const targetCB = iLoad * 1.25;
       let cbSize = standardCBs.find(cb => cb >= targetCB) || Math.ceil(targetCB);
 
-      let selectedWire = wireTable[wireTable.length - 1];
+      // Search Single Wire
+      let selectedWire = null;
       for (let item of wireTable) {
-        let capacity = item[method];
-        if (capacity >= cbSize) {
+        if (item[method] >= cbSize) {
           selectedWire = item;
           break;
         }
@@ -424,9 +446,48 @@
 
       document.getElementById('iLoad').innerText = iLoad.toFixed(2) + ' A';
       document.getElementById('cbSize').innerText = cbSize + ' A';
-      document.getElementById('wireSize').innerText = selectedWire.size + ' ตร.มม.';
-      document.getElementById('wireCapacity').innerText = selectedWire[method] + ' A';
-      document.getElementById('wireDetail').innerText = `สาย ${wireType} (${cores} แกน) ${methodText}`;
+
+      if (selectedWire) {
+        document.getElementById('wireSize').innerText = selectedWire.size + ' ตร.มม.';
+        document.getElementById('wireCapacity').innerText = selectedWire[method] + ' A';
+        document.getElementById('wireDetail').innerText = `สาย ${wireType} (${cores} แกน) ${methodText}`;
+      } else {
+        document.getElementById('wireSize').innerText = 'เกินขนาดสายเดี่ยว (500 Sq.mm)';
+        document.getElementById('wireCapacity').innerText = 'N/A';
+        document.getElementById('wireDetail').innerText = 'แนะนำให้ใช้ระบบเบิ้ลสายขนาน';
+      }
+
+      // Parallel Run Calculation (แนะนำเบิ้ลสายเมื่อ CB >= 160A หรือสายเดี่ยวใหญ่เกิน 50 sq.mm)
+      const parallelBox = document.getElementById('parallelBox');
+      if (cbSize >= 160 || (selectedWire && parseFloat(selectedWire.size) >= 70)) {
+        parallelBox.classList.remove('hidden');
+
+        // คำนวณเบิ้ล 2 เส้น (Parallel 2 Runs) - ใช้ Derating Factor 0.8 สำหรับสายขนาน
+        const derating = 0.8;
+        const requiredCapPerRun = (cbSize / 2) / derating;
+        
+        let parallelWire = wireTable.find(w => w[method] >= requiredCapPerRun);
+
+        if (parallelWire) {
+          const totalCapacity = Math.round(parallelWire[method] * 2 * derating);
+          document.getElementById('parallelText').innerText = `2x (1x${parallelWire.size} ตร.มม.) / เฟส`;
+          document.getElementById('parallelCap').innerText = `พิกัดทนกระแสรวม (คิดตัวคูณลด): ${totalCapacity} A`;
+        } else {
+          // หาก 2 เส้นไม่พอ แนะนำ 3 เส้น
+          const requiredCapPerRun3 = (cbSize / 3) / derating;
+          let parallelWire3 = wireTable.find(w => w[method] >= requiredCapPerRun3);
+          if (parallelWire3) {
+            const totalCapacity = Math.round(parallelWire3[method] * 3 * derating);
+            document.getElementById('parallelText').innerText = `3x (1x${parallelWire3.size} ตร.มม.) / เฟส`;
+            document.getElementById('parallelCap').innerText = `พิกัดทนกระแสรวม (คิดตัวคูณลด): ${totalCapacity} A`;
+          } else {
+            document.getElementById('parallelText').innerText = `แนะนำปรับเพิ่มเส้นขนาน (3x หรือ 4x)`;
+            document.getElementById('parallelCap').innerText = `-`;
+          }
+        }
+      } else {
+        parallelBox.classList.add('hidden');
+      }
     }
   </script>
 </body>
