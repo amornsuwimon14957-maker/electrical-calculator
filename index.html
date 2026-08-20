@@ -78,7 +78,7 @@
       >
         <div>
           <div class="text-sm font-bold text-slate-300 flex items-center gap-2">
-            <span>📉</span> 2. คำนวณค่าแรงดันตกในระบบไฟฟ้า
+            <span>📉</span> 2. คำนวนค่า Voltage Drop
           </div>
           <div class="text-[10px] inline-block px-2 py-0.5 mt-1 bg-yellow-500/20 text-yellow-400 rounded border border-yellow-500/30">
             อยู่ระหว่างพัฒนา
@@ -313,7 +313,6 @@
       const method = document.getElementById('installMethod').value;
       const cores = document.getElementById('wireCores').value;
 
-      // แปลงกำลังไฟฟ้าให้อยู่ในหน่วยวัตต์ (W)
       let powerInWatts = rawPower;
       if (unit === 'kW') {
         powerInWatts = rawPower * 1000;
